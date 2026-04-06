@@ -1,0 +1,12 @@
+# Ignore videos
+*.mp4
+
+# Ignore models
+*.pt
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Output folder
+.dist/
