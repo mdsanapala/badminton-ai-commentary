@@ -47,7 +47,11 @@ CONFIG = {
     # Optional: polygon around playable court area.
     # Example: [[220, 120], [1180, 170], [1020, 690], [160, 640]]
     # Leave empty [] to disable.
-    "court_polygon":            [],
+    "court_polygon":            [[220, 120], [1180, 170], [1020, 690], [160, 640]],  # Example coordinates - adjust to your video's court
+
+    # Optional: exclude regions where referees typically stand (e.g., center sidelines)
+    # Format: list of polygons, each polygon is [[x1,y1], [x2,y2], [x3,y3], [x4,y4]]
+    "referee_exclusion_zones":   [[[500, 100], [700, 100], [700, 150], [500, 150]]],  # Example rectangle - adjust as needed
 
     # Optional: axis for consistent Player A/B labeling in diagonal views.
     # Player A is closer to first point, Player B to second point.
@@ -138,6 +142,7 @@ def detect_players(model, frame, frame_h: int, cfg: dict, prev_players=None):
     results = model(frame, verbose=False)
     persons = []
     court_polygon = cfg.get("court_polygon", [])
+    exclusion_zones = cfg.get("referee_exclusion_zones", [])
 
     for r in results:
         for box in r.boxes:
@@ -145,7 +150,16 @@ def detect_players(model, frame, frame_h: int, cfg: dict, prev_players=None):
                 continue
             x1, y1, x2, y2 = map(int, box.xyxy[0])
             bbox = (x1, y1, x2, y2)
-            if court_polygon and not point_in_polygon(bbox_foot_point(bbox), court_polygon):
+            foot_point = bbox_foot_point(bbox)
+            if court_polygon and not point_in_polygon(foot_point, court_polygon):
+                continue
+            # Check if person is in referee exclusion zones
+            in_exclusion = False
+            for zone in exclusion_zones:
+                if point_in_polygon(foot_point, zone):
+                    in_exclusion = True
+                    break
+            if in_exclusion:
                 continue
             area = (x2 - x1) * (y2 - y1)
             conf = float(box.conf[0])
