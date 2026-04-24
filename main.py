@@ -1,12 +1,3 @@
-"""
-===============================================================
-  AI-Based Automatic Commentary System for Badminton
-  Stack   : Python · OpenCV · YOLOv8 · pyttsx3
-  Fix     : Removed cv2.imshow / waitKey (crashes headless)
-            Added progress logging
-===============================================================
-"""
-
 import cv2
 import numpy as np
 import time
@@ -47,11 +38,11 @@ CONFIG = {
     # Optional: polygon around playable court area.
     # Example: [[220, 120], [1180, 170], [1020, 690], [160, 640]]
     # Leave empty [] to disable.
-    "court_polygon":            [[220, 120], [1180, 170], [1020, 690], [160, 640]],  # Example coordinates - adjust to your video's court
+    "court_polygon": [[220, 120], [1180, 170], [1020, 690], [160, 640]],  
 
     # Optional: exclude regions where referees typically stand (e.g., center sidelines)
     # Format: list of polygons, each polygon is [[x1,y1], [x2,y2], [x3,y3], [x4,y4]]
-    "referee_exclusion_zones":   [[[500, 100], [700, 100], [700, 150], [500, 150]]],  # Example rectangle - adjust as needed
+    "referee_exclusion_zones": [[[500, 100], [700, 100], [700, 150], [500, 150]]],  # Example rectangle - adjust as needed
 
     # Optional: axis for consistent Player A/B labeling in diagonal views.
     # Player A is closer to first point, Player B to second point.
